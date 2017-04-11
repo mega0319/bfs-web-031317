@@ -1,165 +1,141 @@
-## Introduction
+## Breadth First Search
 
-Thus far we have talked about two data structures: arrays and linked lists.  Let's quickly review this.
+### The Problem On Our Minds
 
-1. Arrays
-Remember that arrays work by storing each element a fixed distance from an initial element.  
+Now that we have discussed different types of graphs, we can begin to discuss a characteristic of a component of the graph: whether two vertices are **connected**.  
 
-```text
+Let's go again to wikipedia, to learn a little bit more about this: 
 
-|'b' |'c' |'d'| ____|___ |___|
- 500  508   516   524  532 540
-```
+![](https://s3-us-west-2.amazonaws.com/curriculum-content/algorithms/connecting-components.png)
 
-This works well for retrieving information, because by knowing that an array starts at a specific address in memory, it then knows exactly where an element at a specific index lives.  With a sorted array, one can employ binary search to determine if an element is included in the array in big o log(n) time.
 
-More costly is adding or removing an element to the beginning of an array.  To add an element to the beginning means, that each subsequent element must move down one slot, which therefore take big o (n) time.
+Wikipedia tells a couple different things: first that a graph is made up of **subgraphs**.  This makes sense, as a collection of vertices and edges consists of other vertices and edges (sounds like a recursive data structure), and that we call this subset a **component** of the graph.  Finally, it tells us that a connected component exists where there is a path from one part of the component to another.  
+
+For example, let's look at our Simpson family tree, but this time we can add in the Flanders family tree as part of our graph of families on The Simpsons.  
 
 ```text
+      Grampa (Abe) Simpson                  
+               |                                         
+  		 Homer - Marge                  Ned Flanders - Maude Flanders
+         |     |       |                            /  \
+      Bart    Lisa    Maggie             Rod Flanders   Todd Flanders
+```  
+> Familial ties on The Simpsons
 
-|'a' |'b' |'c'| 'd' |___ |___|
- 500  508  516  524  532 540
+As you can see while there exists a path from one of the vertexs in the Simpson family tree to another family member, there does not exist a path to any of part of the Flanders family component.  So we would say that each vertex representing a Simpsons family member above is part of a connected component, and every vertex representing a Flanders family member consists of a separate connected component.
+
+Determining whether a network is connected is very important.  For example, when building a national highway system, if there is exists a highway not connected to another, then that means it is impossible to travel to that highway from another highway.  In the context of a social network, this means that there are individuals who do not have a social connection between the two.   
+
+There are multiple techniques for exploring the connectivity of a graph.  In this lesson, we will discuss **breadth first search** as one of these techniques. 
+
+### Our approach
+
+With breadth first search, we start with a given vertex and mark it as visited.  We then visit each of it's adjacent vertices.  We then mark that given vertex explored.  A vertex is explored if we have visited all of it's adjacent vertexs.  A vertex is visited if we have encountered it in our search.  We then explore the next vertex.
+
+This is how we decide which vertex to explore next.  Each time we *visit* a vertex, we place it in a queue.  We *explore* the vertex at the front of the queue, and once we explore the vertex we remove it from the queue.
+
+>Note: Queue is a data structure where we add and remove elements like people waiting in line at a bank.  Elements only get added to the back of the queue, and an element gets removed from the queue only if it was the first element added to the queue.  This is referred to as First In First Out (FIFO).
+
+![](https://s3-us-west-2.amazonaws.com/curriculum-content/algorithms/bank-line.jpg)
+
+Let's walk through an example of breadth first search.
+
+Let's start with the NYC subway between 8th avenue and Lexington Avenue, and between 42nd street and 14th street, in Manhattan.  We want to see if this portion of the graph is connected.  As an added bonus, we also will calculate the number of stops between herald square (34th and 6th) and every other stop on our route.  This is because with breadth first search, it is fairly easy to also calculate each vertex's distance from the starting distance.   
+
+This is our approach.  Starting with the only initially visited vertex, the root vertex, and fully explore the root vertex.  Then explore each every other visited but unexplored vertex, until every vertex has been visited and explored.  Each time, we visit a vertex we can say that it's distance from the root vertex is one more than the distance of the previous vertex.
+
+![](https://s3-us-west-2.amazonaws.com/curriculum-content/algorithms/graphedstops.png)
+
+
+Step 1: Explore 34th & 6th
+
+* Set distance between 34th & 6th and 34th & 6th as zero. 
+* Explore every other not yet discovered vertex that is adjacent to 34th & 6th.  This exploration leads us to discover 28th & Broadway and 23rd & 6th.  
+* We set their distance from 34th & 6th as one plus the distance of the vertex that led to their discovery.  34th & 6th led to their discovery and its distance was 0.  So 1 + 0 = 1, and the distance of 23rd & 6th and 28th & Broadway is 1.
+
+Now take a look at the state of the queue by examining the list under visited nodes.  Note that we removed 34th & 6th from our queue of visited vertices when we explored it.  We placed 23rd & 6th on top of the queue when we visited it and then 28th & Broadway on top of 23rd & 6th. Following first in first out, we explore the vertex that has been in the queue the longest, 23rd & 6th.  
+
+![](https://s3-us-west-2.amazonaws.com/curriculum-content/algorithms/subwaydistance1.png)
+
+Step 2: Explore 23rd & 6th
+
+* There is one vertex adjacent to 23rd and 6th: 14th & 6th.  So we mark 14th and 6th as visited and set its distance from 34th & 6th as 1 + distance of vertex that led to its discovery.  So the distance of 14th & 6th from 23rd & 6th is 2.
+* We move 23rd & 6th from being a visited vertex to an explored vertex.
+* Next up to explore is the bottom most visited vertex, which is 28th and 6th.
+
+![](https://s3-us-west-2.amazonaws.com/curriculum-content/algorithms/subwaydistance2.png)
+
+We continue this process until we have no visited vertices left.
+
+So at step 3, we explore 28th & Broadway.  This means we visit 23rd & Broadway as it is the only adjacent vertex to 28th & 6th which has not yet been visited.  We set the distance to 2 and place it on top of our queue.  
+
+| Visited Nodes        
+| ------------- 
+| 23rd & Broadway | 
+| 14th & 6th      | 
+
+At step 4, we explore 14th & 6th, which has no adjacent unvisited vertexs.  
+
+| Visited Nodes        
+| ------------- 
+| 23rd & Broadway | 
+
+At step 5, we move on to explore 23rd and Broadway, and find 14th & Lex as the only unvisited vertex.
+
+| Visited Nodes        
+| ------------- 
+| 14th & Lex | 
+
+Then we explore 14th & Lex.
+
+| Visited Nodes        
+| ------------- 
+| 23rd & Lex | 
+
+Finally, we explore 23rd and Lex, which has no adjacent unvisited nodes.  And thus when we remove 23rd & Lex from the queue, our queue is empty and our algorithm completes. 
+
+| Visited Nodes        
+| ------------- 
+|   | 
+
+### Translate to code
+
+Ok, so how do we turn something like this into code?  Remember that in the previous section we described the graph in terms of the following.
+
+```javascript
+let edges = [
+	['14th&6th', '23rd&6th'],
+	['23rd&6th', '34th&6th'],
+	['34th&6th', '28th&Bwy'],
+	['28th&Bwy', '23rd&Bwy'],
+	['23rd&Bwy', '14th&Lex'],
+	['14th&Lex', '23rd&Lex'],
+	['23rd&Lex', '28th&Lex'],
+	['28th&Lex', '33rd&Lex']
+]
+
+let vertices = ['34th&6th', '23rd&6th', '14th&6th',
+'28th&Bwy', '23rd&Bwy',
+ '33rd&Lex', '28th&Lex', '23rd&Lex', '14th&Lex']
 ```
 
-2. Linked Lists
+Now for each vertex, we know that we will need to keep track of the of the distance and predecessor so let's change our collection of vertices to the following.  
 
-Linked lists are more costly for retrieval index, as each node can live at any specific address, and one must visit each node to discover where the next node lives.  Because of this, retrieval costs big o (n).  However, adding or removing elements to the beginning of the linked list can be done by only changing the node before and after the inserted node.
-is not dependent on the number of elements in the list.  For example, in the diagram below we insert a node holding the string 'c' by changing what the previous node points to and changing what the inserted node points to.
-
-```text
-
-'a'  ->    'b' ->    'd'
-500        1024      35
-  1024       35
-
-
-'a' -> 'b' -> 'c' -> 'd'
-500   1024    42     35
-  1024   42     35
-```
-> To insert the node, we only had to go change the second node to point to the inserted node, and have the inserted node point to the proper subsequent node.
-
-Let's see this in a chart:
-
-Data Structure | Adding Elements | Retrieving Elements
-Arrays             BigO(n)             BigO(1)
-Linked List        BigO(1)             BigO(n)             
-
-So arrays are retrieval but not great at manipulation, while linked lists are stronger at manipulation while weaker at retrieval.  Are trees the tool that can perform with both?  But first, what is a tree?
-
-### Trees in the world
-
-Trees are a data structure that connects nodes in a parent - child relationship.  Each parent node would have a pointer and therefore know about its children.  
-
-For example, here is a family tree.
-
-```text
-      Grampa (Abe) Simpson
-              |      
-              V
-          Homer Simpson
-          |     |      |
-          V     V      V
-      Bart    Lisa    Maggie
-```
-> Simpson Family Tree
-
-In the diagram above, Grampa Simpson is a parent of Homer Simpson and Homer Simpson is a parent of Bar, Lisa and Maggie.  Each individual in the Simpson family tree is a node.  The **root node** is the only node in a tree without a parent.  Another example of a tree is an organizational chart.
-
-```text
-                                   CEO
-       |                            |                                 |
-       V                            V                                 V
-  Chief Ops Officer        Chief Finance Officer             Chief Marketing Officer
-    |             |               |         |                        |        |
-    V             V               V         V                        V        V
-  VP Human Resources    VP Operations      VP Accounting       VP Sales      VP Advertising  
-
+```javascript
+let vertices = [
+  {name: '34th&6th', distance: null, predecessor: null},
+  {name: '23rd&6th', distance: null, predecessor: null},
+  {name: '14th&6th', distance: null, predecessor: null},
+  {name: '34th&6th', distance: null, predecessor: null},
+  {name: '28th&Bwy', distance: null, predecessor: null},
+  {name: '14th&Lex', distance: null, predecessor: null},
+]
 ```
 
-In the above diagram, the CEO has a parent-child relationship with his direct reports, the Chief Operating Officer, the Chief Financial Officer and the Chief Marketing Officer.  Each of the C level people has a parent-child relationship with each one of their direct reports.  
+Now let's go back to our procedure.  Start at the vertex that we are calculating distance from.  Explore a vertex by finding the adjacent vertexs, visit each adjacent vertex and mark it's predecessor.  Store the visited vertices that are unexplored in a queue, and then explore the vertex next in the queue.  Now break it into steps, and then translate this into code.  Give it a shot.  We'll go through it in the lab that follows.
 
-One thing that you may start noticing is that the parent child relationship can become convenient for sorting information.  For example, the tree above represents the organizational hierarchy.  Those on the same level (for example, all of the Vice Presidents) can be thought of as **siblings**.  
+### Summary
 
-> In a tree, siblings are nodes who share a parent node.
-
-
-### Binary Search Trees
-
-Let's now discuss a specific type of tree.  A binary search tree.  Binary search trees are trees where we organize the nodes such that the nodes adhere to two rules:
-  1. No parent can have more than two children (explaining the binary)
-  2. Each left child node is less than it's parent node, and each right child is more than the parent node.
-
-Let's place the following numbers in a binary search tree.  4, 1, 2, 5, 6, 3
-
-```text
-   T1       T2     T3       T4             T5            T6
-
-   4        4      4         4             4              4
-           /      /        /   \         /   \          /   \
-          1      1        1     5       1     5        1     5
-                   \       \             \     \        \     \
-                   2        2            2     6        2     6
-                                                         \
-                                                          3
-```
-
-Above we illustrate the steps involved in inserting each node into a binary search tree.  WE indicate each step at the top, with T1 as the first step, T2 as the second, and so on(T stands for time).  The root node is the first node that we begin with, the number 4.  Then 1 is less than 4, so we place the number to the left.  In T3, we take the number 2.  Two is less than four, so it belongs to the left of four.  Because 1 is already to the left of four, we need to place the 2 one more level down.  Now 2 is greater than 1, so we place it to the right of the node with the number 1.  So if you look at our tree at T3, you can see that the number 2 is to the left of all of the numbers that it is smaller than, the number four.  And it is to the right of all of the numbers that it is larger than, the number 1.  Trace the subsequent steps followed at T4, T5 and T6.  
-
-Note that the same list of numbers results in a different tree, if we insert each node in a different order.
-
-1, 2, 3, 4, 5, 6
-
-1  
-  2
-    3
-      4
-        5
-          6
-
-So then take these same numbers and get a totally different looking tree.
-
-4, 1, 2, 5, 6, 3
-A second example - start at number 4.  So then how does 1 compare to 4.  Is 2 less than one, and then don't go to the left of one, instead go to the right.  
-
-Question - how do you deal with duplicates.
-What is the application of this, an org chart with people being equal.  
-Then would have to rebalance a tree. So the dom is a tree, and git is a tree, and is just a tree.
-
-Or react it is comparing one tree to the other and making the smallest number of operations.  Hashketball you can think of as a tree.
+When we search a graph, we are determining if a component is connected, meaning there is a path between all of the vertices.  With breadth first search we explore the graph by sweeping through it in layers.  We accomplish this by placing each node that we visit in a queue, and then exploring each node in the order it was placed into the queue.  
 
 
-
-  So now each node will need three pieces of information
-  Has a value, and each one takes it.  Point out that it's a directed graph so the parent knows about children but child does not know about parent.  
-
-  Know that there is nothing
-  The definition of a binary search tree, is that everything to the smaller is
-  this is a concept rather than a rule - we are using code to model these concepts.
-
-  So then inserting into a binary search tree, so write this method find or add.    
-
-31 - 47 is questions
-So you have to start at the root for a bst.
-
-A.   Coding with Trees
-    1. find_or_add(4, 3)
-      true
-    2. find_or_add(4, 7)
-      root, element
-
-    So at this point in time, I am doing the same procedure
-
-B. def in_order
-In order - it is everything to the left in order followed by root node, followed by everything to the right in order.  So then if I want to place in order, then it is left subtree in order, root ,and then everything to the right in order. So this is recursion all over again.  
-
-def in_order(root_node)
-  if root_node.left
-    puts node.left
-    in_order(root_node.left)
-  end
-    root_node
-  if node.right
-    in_order(root_node.right)
-  end
-end
