@@ -109,26 +109,33 @@ let edges = [
 	['34th&6th', '28th&Bwy'],
 	['28th&Bwy', '23rd&Bwy'],
 	['23rd&Bwy', '14th&Lex'],
-	['14th&Lex', '23rd&Lex'],
-	['23rd&Lex', '28th&Lex'],
-	['28th&Lex', '33rd&Lex']
+	['14th&Lex', '23rd&Lex']
 ]
 
-let vertices = ['34th&6th', '23rd&6th', '14th&6th',
-'28th&Bwy', '23rd&Bwy',
- '33rd&Lex', '28th&Lex', '23rd&Lex', '14th&Lex']
+let vertices = [
+  {name: '34th&6th', discovered: null},
+  {name: '23rd&6th', discovered: null},
+  {name: '14th&6th', discovered: null},
+  {name: '28th&Bwy', discovered: null},
+  {name: '23rd&Bwy', discovered: null},
+  {name: '14th&Lex', discovered: null},
+  {name: '23rd&Lex', discovered: null}
+]
 ```
 
-Now for each vertex, we know that we will need to keep track of the of the distance and predecessor so let's change our collection of vertices to the following.  
+
+
+Now for each vertex, we know that we will need to keep track of the of the distance and predecessor so let's change our collection of vertices to the following.  We will know if it has a distance, and has been discovered. 
 
 ```javascript
 let vertices = [
   {name: '34th&6th', distance: null, predecessor: null},
   {name: '23rd&6th', distance: null, predecessor: null},
   {name: '14th&6th', distance: null, predecessor: null},
-  {name: '34th&6th', distance: null, predecessor: null},
   {name: '28th&Bwy', distance: null, predecessor: null},
+  {name: '23rd&Bwy', distance: null, predecessor: null},
   {name: '14th&Lex', distance: null, predecessor: null},
+  {name: '23rd&Lex', distance: null, predecessor: null},
 ]
 ```
 
