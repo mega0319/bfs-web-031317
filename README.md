@@ -4,7 +4,7 @@
 
 Now that we have discussed different types of graphs, we can begin to discuss a characteristic of a component of the graph: whether two vertices are **connected**.  
 
-Let's go again to wikipedia, to learn a little bit more about this: 
+Let's go again to wikipedia, to learn a little bit more about this:
 
 ![](https://s3-us-west-2.amazonaws.com/curriculum-content/algorithms/connecting-components.png)
 
@@ -26,7 +26,7 @@ As you can see while there exists a path from one of the vertexs in the Simpson 
 
 Determining whether a network is connected is very important.  For example, when building a national highway system, if there is exists a highway not connected to another, then that means it is impossible to travel to that highway from another highway.  In the context of a social network, this means that there are individuals who do not have a social connection between the two.   
 
-There are multiple techniques for exploring the connectivity of a graph.  In this lesson, we will discuss **breadth first search** as one of these techniques. 
+There are multiple techniques for exploring the connectivity of a graph.  In this lesson, we will discuss **breadth first search** as one of these techniques.
 
 ### Our approach
 
@@ -49,7 +49,7 @@ This is our approach.  Starting with the only initially visited vertex, the root
 
 Step 1: Explore 34th & 6th
 
-* Set distance between 34th & 6th and 34th & 6th as zero. 
+* Set distance between 34th & 6th and 34th & 6th as zero.
 * Explore every other not yet discovered vertex that is adjacent to 34th & 6th.  This exploration leads us to discover 28th & Broadway and 23rd & 6th.  
 * We set their distance from 34th & 6th as one plus the distance of the vertex that led to their discovery.  34th & 6th led to their discovery and its distance was 0.  So 1 + 0 = 1, and the distance of 23rd & 6th and 28th & Broadway is 1.
 
@@ -61,7 +61,7 @@ Step 2: Explore 23rd & 6th
 
 * There is one vertex adjacent to 23rd and 6th: 14th & 6th.  So we mark 14th and 6th as visited and set its distance from 34th & 6th as 1 + distance of vertex that led to its discovery.  So the distance of 14th & 6th from 23rd & 6th is 2.
 * We move 23rd & 6th from being a visited vertex to an explored vertex.
-* Next up to explore is the bottom most visited vertex, which is 28th and 6th.
+* Next up to explore is the bottom most visited vertex, which is 28th & Broadway.
 
 ![](https://s3-us-west-2.amazonaws.com/curriculum-content/algorithms/subwaydistance2.png)
 
@@ -70,33 +70,33 @@ We continue this process until we have no visited vertices left.
 So at step 3, we explore 28th & Broadway.  This means we visit 23rd & Broadway as it is the only adjacent vertex to 28th & 6th which has not yet been visited.  We set the distance to 2 and place it on top of our queue.  
 
 | Visited Nodes        
-| ------------- 
-| 23rd & Broadway | 
-| 14th & 6th      | 
+| -------------
+| 23rd & Broadway |
+| 14th & 6th      |
 
 At step 4, we explore 14th & 6th, which has no adjacent unvisited vertexs.  
 
 | Visited Nodes        
-| ------------- 
-| 23rd & Broadway | 
+| -------------
+| 23rd & Broadway |
 
 At step 5, we move on to explore 23rd and Broadway, and find 14th & Lex as the only unvisited vertex.
 
 | Visited Nodes        
-| ------------- 
-| 14th & Lex | 
+| -------------
+| 14th & Lex |
 
 Then we explore 14th & Lex.
 
 | Visited Nodes        
-| ------------- 
-| 23rd & Lex | 
+| -------------
+| 23rd & Lex |
 
-Finally, we explore 23rd and Lex, which has no adjacent unvisited nodes.  And thus when we remove 23rd & Lex from the queue, our queue is empty and our algorithm completes. 
+Finally, we explore 23rd and Lex, which has no adjacent unvisited nodes.  And thus when we remove 23rd & Lex from the queue, our queue is empty and our algorithm completes.
 
 | Visited Nodes        
-| ------------- 
-|   | 
+| -------------
+|   |
 
 ### Translate to code
 
@@ -125,7 +125,7 @@ let vertices = [
 
 
 
-Now for each vertex, we know that we will need to keep track of the of the distance and predecessor so let's change our collection of vertices to the following.  We will know if it has a distance, and has been discovered. 
+Now for each vertex, we know that we will need to keep track of the of the distance and predecessor so let's change our collection of vertices to the following.  We will know if it has a distance, and has been discovered.
 
 ```javascript
 let vertices = [
@@ -144,5 +144,3 @@ Now let's go back to our procedure.  Start at the vertex that we are calculating
 ### Summary
 
 When we search a graph, we are determining if a component is connected, meaning there is a path between all of the vertices.  With breadth first search we explore the graph by sweeping through it in layers.  We accomplish this by placing each node that we visit in a queue, and then exploring each node in the order it was placed into the queue.  
-
-
