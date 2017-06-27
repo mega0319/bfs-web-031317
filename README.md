@@ -67,7 +67,7 @@ Step 2: Explore 23rd & 6th
 
 We continue this process until we have no visited vertices left.
 
-So at step 3, we explore 28th & Broadway.  This means we visit 23rd & Broadway as it is the only adjacent vertex to 28th & 6th which has not yet been visited.  We set the distance to 2 and place it on top of our queue.  
+So at step 3, we explore 28th & Broadway.  This means we visit 23rd & Broadway as it is the only adjacent vertex to 28th & Broadway which has not yet been visited.  We set the distance to 2 and place it on top of our queue.  
 
 | Visited Nodes        
 | -------------
